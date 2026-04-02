@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spin Zink Gaming Dashboard</title>
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, sans-serif;
+    }
+
+    body{
+      min-height:100vh;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(0,255,255,0.20), transparent 24%),
+        radial-gradient(circle at 80% 15%, rgba(255,0,255,0.18), transparent 22%),
+        radial-gradient(circle at 15% 85%, rgba(57,255,20,0.16), transparent 20%),
+        radial-gradient(circle at 85% 80%, rgba(255,140,0,0.16), transparent 20%),
+        linear-gradient(135deg,#030712,#07111f,#130d2f,#1b1145 60%, #09111d);
+      color:white;
+      overflow-x:hidden;
+    }
+
+    .dashboard{
+      min-height:100vh;
+      padding:20px;
+    }
+
+    .dashboard-wrap{
+      max-width:1200px;
+      margin:0 auto;
+      min-height:calc(100vh - 40px);
+      background:rgba(7,10,22,0.78);
+      border:1px solid rgba(0,255,255,0.22);
+      border-radius:28px;
+      box-shadow:0 0 24px rgba(0,255,255,0.14), 0 0 60px rgba(128,0,255,0.18), inset 0 0 25px rgba(255,255,255,0.03);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .dashboard-wrap::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(rgba(0,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,255,0.05) 1px, transparent 1px);
+      background-size:40px 40px;
+      pointer-events:none;
+    }
+
+    .dashboard-wrap::after{
+      content:"BATTLE ZONE";
+      position:absolute;
+      top:50%;
+      left:50%;
+      transform:translate(-50%,-50%) rotate(-18deg);
+      font-size:90px;
+      font-weight:900;
+      letter-spacing:8px;
+      color:rgba(255,255,255,0.05);
+      text-shadow:
+        0 0 10px rgba(255,120,0,0.12),
+        0 0 25px rgba(255,255,255,0.05);
+      pointer-events:none;
+      z-index:1;
+      white-space:nowrap;
+    }
+
+    .topbar{
+      position:relative;
+      z-index:3;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:14px;
+      padding:20px 22px;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+      flex-wrap:wrap;
+    }
+
+    .brand{
+      font-size:28px;
+      font-weight:bold;
+      color:#00f7ff;
+      text-shadow:0 0 14px rgba(0,247,255,0.45), 0 0 30px rgba(139,92,246,0.18);
+      letter-spacing:1px;
+      text-transform:uppercase;
+    }
+
+    .top-right{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .balance-box, .spins-box{
+      min-width:190px;
+      padding:12px 18px;
+      border-radius:16px;
+      background:rgba(0,247,255,0.12);
+      border:1px solid rgba(0,247,255,0.25);
+      text-align:center;
+      box-shadow:0 0 18px rgba(0,247,255,0.12);
+    }
+
+    .balance-label, .spins-label{
+      font-size:13px;
+      color:#cbd5e1;
+      margin-bottom:4px;
+    }
+
+    .balance-value, .spins-value{
+      font-size:26px;
+      font-weight:bold;
+      color:#00f7ff;
+    }
+
+    .profile-box{
+      position:relative;
+    }
+
+    .profile-btn{
+      border:none;
+      padding:12px 18px;
+      border-radius:14px;
+      background:linear-gradient(90deg,#00f7ff,#8b5cf6);
+      color:white;
+      font-size:16px;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    .profile-menu{
+      position:absolute;
+      top:56px;
+      right:0;
+      width:220px;
+      background:rgba(8,12,24,0.96);
+      border:1px solid rgba(0,255,255,0.22);
+      border-radius:16px;
+      padding:12px;
+      display:none;
+      z-index:10;
+      box-shadow:0 10px 30px rgba(0,0,0,0.35);
+    }
+
+    .profile-menu.show{
+      display:block;
+    }
+
+    .uid-box{
+      background:#0f172a;
+      padding:12px;
+      border-radius:12px;
+      margin-bottom:10px;
+      font-size:14px;
+      line-height:1.5;
+      color:#cbd5e1;
+      text-align:left;
+    }
+
+    .profile-menu button{
+      width:100%;
+      margin-top:8px;
+      border:none;
+      padding:12px;
+      border-radius:12px;
+      background:#111827;
+      color:white;
+      cursor:pointer;
+      font-size:15px;
+    }
+
+    .main-area{
+      position:relative;
+      z-index:2;
+      padding:30px 20px 45px;
+    }
+
+    .hero{
+      text-align:center;
+      margin-bottom:28px;
+    }
+
+    .welcome{
+      font-size:42px;
+      line-height:1.3;
+      margin-bottom:12px;
+      text-shadow:0 0 10px rgba(255,255,255,0.15), 0 0 22px rgba(0,247,255,0.2), 0 0 34px rgba(139,92,246,0.16);
+    }
+
+    .player{
+      font-size:24px;
+      color:#00f7ff;
+      margin-bottom:10px;
+      font-weight:bold;
+    }
+
+    .info{
+      max-width:720px;
+      color:#d1d5db;
+      font-size:18px;
+      margin:0 auto;
+    }
+
+    .content-grid{
+      display:grid;
+      grid-template-columns:1.1fr 0.9fr;
+      gap:24px;
+      margin-top:28px;
+    }
+
+    .panel{
+      background:rgba(15,23,42,0.78);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:24px;
+      padding:22px;
+      box-shadow:0 10px 24px rgba(0,0,0,0.22);
+    }
+
+    .panel-title{
+      font-size:24px;
+      margin-bottom:16px;
+      color:#00f7ff;
+      text-shadow:0 0 10px rgba(0,247,255,0.18);
+      text-align:center;
+      letter-spacing:1px;
+      text-transform:uppercase;
+    }
+
+    .wheel-area{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .pointer{
+      display:none;
+    }
+
+    .wheel-wrap{
+      position:relative;
+      width:330px;
+      height:330px;
+      margin:0 auto 18px;
+      padding:8px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(255,255,255,0.08), rgba(0,255,255,0.05), rgba(139,92,246,0.08));
+      box-shadow:0 0 25px rgba(0,247,255,0.12), inset 0 0 25px rgba(255,255,255,0.04);
+    }
+
+    .wheel{
+      width:100%;
+      height:100%;
+      border-radius:50%;
+      border:8px solid rgba(255,255,255,0.92);
+      box-shadow:0 0 25px rgba(0,247,255,0.18), 0 0 55px rgba(139,92,246,0.14);
+      transition:transform 5s cubic-bezier(0.17, 0.67, 0.16, 1);
+      background:
+        conic-gradient(
+          #00e7ff 0deg 45deg,
+          #8b5cf6 45deg 90deg,
+          #22c55e 90deg 135deg,
+          #f59e0b 135deg 180deg,
+          #ef4444 180deg 225deg,
+          #ec4899 225deg 270deg,
+          #3b82f6 270deg 315deg,
+          #14b8a6 315deg 360deg
+        );
+      position:relative;
+      overflow:hidden;
+    }
+
+    .wheel::after{
+      content:"SPIN";
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      width:84px;
+      height:84px;
+      border-radius:50%;
+      background:radial-gradient(circle at 30% 30%, #18243f, #0f172a 60%, #08111f);
+      border:4px solid rgba(255,255,255,0.85);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:bold;
+      color:#00f7ff;
+      z-index:5;
+      box-shadow:0 0 14px rgba(0,247,255,0.25), inset 0 0 14px rgba(255,255,255,0.05);
+      letter-spacing:1px;
+    }
+
+    .wheel-label{
+      position:absolute;
+      left:50%;
+      top:50%;
+      width:54px;
+      text-align:center;
+      color:#fff;
+      font-size:17px;
+      font-weight:900;
+      line-height:1;
+      text-shadow:0 2px 6px rgba(0,0,0,0.65);
+      z-index:2;
+      pointer-events:none;
+      transform:translate(-50%, -50%);
+    }
+
+    .label-1{ top:52px; left:165px; }
+    .label-2{ top:86px; left:245px; }
+    .label-3{ top:165px; left:278px; }
+    .label-4{ top:245px; left:245px; }
+    .label-5{ top:278px; left:165px; }
+    .label-6{ top:245px; left:86px; }
+    .label-7{ top:165px; left:52px; }
+    .label-8{ top:86px; left:86px; }
+
+    .spin-btn, .buy-btn, .withdraw-btn, .claim-btn{
+      border:none;
+      border-radius:16px;
+      color:#fff;
+      font-size:17px;
+      font-weight:bold;
+      padding:14px 18px;
+      cursor:pointer;
+      width:100%;
+      box-shadow:0 8px 20px rgba(0,0,0,0.25);
+    }
+
+    .spin-btn{
+      max-width:260px;
+      background:linear-gradient(90deg,#00f7ff,#8b5cf6);
+    }
+
+    .buy-btn{
+      background:linear-gradient(90deg,#22c55e,#0ea5e9);
+    }
+
+    .withdraw-btn{
+      margin-top:10px;
+      background:linear-gradient(90deg,#f59e0b,#ef4444);
+    }
+
+    .claim-btn{
+      background:linear-gradient(90deg,#00f7ff,#8b5cf6);
+      margin-top:12px;
+    }
+
+    .spin-btn:disabled, .withdraw-btn:disabled, .claim-btn:disabled{
+      opacity:0.65;
+      cursor:not-allowed;
+    }
+
+    .spin-result{
+      margin-top:16px;
+      min-height:92px;
+      font-size:18px;
+      color:#e5e7eb;
+      line-height:1.5;
+      text-align:center;
+      white-space:pre-line;
+      padding:16px 14px;
+      border-radius:18px;
+      background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.08);
+    }
+
+    .win-amount{
+      display:block;
+      font-size:38px;
+      font-weight:900;
+      color:#ffd700;
+      margin-bottom:8px;
+      text-shadow:0 0 10px rgba(255,215,0,0.45), 0 0 22px rgba(255,255,255,0.18);
+      animation:winPulse 1s ease-in-out infinite alternate;
+      letter-spacing:1px;
+    }
+
+    @keyframes winPulse{
+      from{
+        transform:scale(1);
+        filter:brightness(1);
+      }
+      to{
+        transform:scale(1.08);
+        filter:brightness(1.18);
+      }
+    }
+
+    .buy-options{
+      width:100%;
+      max-width:320px;
+      margin-top:16px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .owner-card{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+
+    .claim-box{
+      display:none;
+      padding:16px;
+      border-radius:18px;
+      background:#0b1220;
+      border:1px solid rgba(255,255,255,0.08);
+      text-align:center;
+    }
+
+    .claim-box.show{
+      display:block;
+    }
+
+    .owner-photo{
+      width:130px;
+      height:130px;
+      border-radius:50%;
+      object-fit:cover;
+      border:4px solid rgba(0,247,255,0.5);
+      box-shadow:0 0 18px rgba(0,247,255,0.18);
+      background:#111827;
+      margin-bottom:12px;
+      cursor:pointer;
+    }
+
+    .claim-title{
+      font-size:22px;
+      font-weight:bold;
+      color:#00f7ff;
+      margin-bottom:8px;
+    }
+
+    .claim-text{
+      color:#cbd5e1;
+      font-size:14px;
+      line-height:1.5;
+      margin-bottom:12px;
+    }
+
+    input[type="text"], input[type="number"], input[type="tel"]{
+      width:100%;
+      border:none;
+      outline:none;
+      border-radius:16px;
+      padding:15px;
+      font-size:15px;
+      background:#f8fafc;
+      color:#111827;
+    }
+
+    .claim-status, .withdraw-status{
+      min-height:24px;
+      font-size:14px;
+      color:#cbd5e1;
+      text-align:center;
+      white-space:pre-line;
+      margin-top:10px;
+    }
+
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.78);
+      display:none;
+      justify-content:center;
+      align-items:center;
+      z-index:100;
+      padding:20px;
+    }
+
+    .modal.show{
+      display:flex;
+    }
+
+    .modal-box{
+      position:relative;
+      max-width:520px;
+      width:100%;
+      background:#0f172a;
+      border:1px solid rgba(0,247,255,0.18);
+      border-radius:24px;
+      padding:18px;
+      text-align:center;
+      box-shadow:0 15px 40px rgba(0,0,0,0.4);
+    }
+
+    .modal-box img{
+      width:100%;
+      max-height:80vh;
+      object-fit:contain;
+      border-radius:18px;
+      background:#111827;
+    }
+
+    .close-modal{
+      position:absolute;
+      top:10px;
+      right:12px;
+      width:36px;
+      height:36px;
+      border:none;
+      border-radius:50%;
+      background:rgba(255,255,255,0.15);
+      color:white;
+      font-size:22px;
+      cursor:pointer;
+    }
+
+    .glow{
+      position:absolute;
+      border-radius:50%;
+      filter:blur(55px);
+      opacity:0.35;
+      pointer-events:none;
+    }
+
+    .g1{
+      width:180px;
+      height:180px;
+      background:#00f7ff;
+      top:30px;
+      left:20px;
+    }
+
+    .g2{
+      width:220px;
+      height:220px;
+      background:#8b5cf6;
+      right:20px;
+      bottom:20px;
+    }
+
+    .g3{
+      width:140px;
+      height:140px;
+      background:#22c55e;
+      top:50%;
+      left:50%;
+      transform:translate(-50%,-50%);
+    }
+
+    .terms-btn{
+      position:fixed;
+      right:12px;
+      bottom:12px;
+      border:none;
+      padding:12px 16px;
+      border-radius:14px;
+      background:linear-gradient(90deg,#00f7ff,#8b5cf6);
+      color:white;
+      font-size:14px;
+      font-weight:bold;
+      cursor:pointer;
+      z-index:9999;
+      box-shadow:0 0 12px rgba(0,255,255,0.35);
+    }
+
+    .disclaimer-box{
+      display:none;
+      position:fixed;
+      right:12px;
+      bottom:64px;
+      width:300px;
+      max-height:70vh;
+      overflow-y:auto;
+      background:rgba(0,0,0,0.92);
+      color:white;
+      padding:15px;
+      border-radius:12px;
+      font-size:13px;
+      line-height:1.5;
+      z-index:9999;
+      box-shadow:0 0 10px rgba(0,255,255,0.3);
+      border:1px solid rgba(0,255,255,0.2);
+    }
+
+    .disclaimer-box.show{
+      display:block;
+    }
+
+    .disclaimer-close{
+      float:right;
+      border:none;
+      background:transparent;
+      color:white;
+      font-size:20px;
+      cursor:pointer;
+      margin-top:-4px;
+    }
+
+    @media (max-width: 980px){
+      .content-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media (max-width: 640px){
+      .welcome{
+        font-size:30px;
+      }
+
+      .player{
+        font-size:20px;
+      }
+
+      .info{
+        font-size:16px;
+      }
+
+      .wheel-wrap{
+        width:280px;
+        height:280px;
+      }
+
+      .wheel-label{
+        width:46px;
+        font-size:14px;
+      }
+
+      .label-1{ top:44px; left:140px; }
+      .label-2{ top:73px; left:208px; }
+      .label-3{ top:140px; left:236px; }
+      .label-4{ top:208px; left:208px; }
+      .label-5{ top:236px; left:140px; }
+      .label-6{ top:208px; left:73px; }
+      .label-7{ top:140px; left:44px; }
+      .label-8{ top:73px; left:73px; }
+
+      .topbar{
+        justify-content:center;
+      }
+
+      .top-right{
+        justify-content:center;
+      }
+
+      .disclaimer-box{
+        left:10px;
+        right:10px;
+        width:auto;
+        bottom:60px;
+        max-height:55vh;
+      }
+
+      .terms-btn{
+        right:10px;
+        bottom:10px;
+      }
+
+      .dashboard-wrap::after{
+        font-size:42px;
+        letter-spacing:4px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <button class="terms-btn" id="termsBtn">Terms</button>
+
+  <div class="disclaimer-box" id="disclaimerBox">
+    <button class="disclaimer-close" id="closeDisclaimerBtn">&times;</button>
+    <b>Disclaimer & Terms</b><br><br>
+    This website is created for entertainment purposes only.<br><br>
+    All spins, points, or rewards shown on this platform are virtual and have no real monetary value.<br><br>
+    Users may choose to support the platform by purchasing spins voluntarily. This payment is completely optional and is intended only to support the development of the website and help create better and more useful platforms in the future.<br><br>
+    All payments are non-refundable and do not guarantee any real earnings or monetary benefits.<br><br>
+    No real money withdrawal is allowed from this platform.<br><br>
+    By using this website, you agree that you are participating at your own discretion.<br><br>
+    The owner is not responsible for any financial loss or misunderstanding.
+  </div>
+
+  <div class="dashboard">
+    <div class="dashboard-wrap">
+      <div class="glow g1"></div>
+      <div class="glow g2"></div>
+      <div class="glow g3"></div>
+
+      <div class="topbar">
+        <div class="brand">Spin Zink</div>
+
+        <div class="top-right">
+          <div class="spins-box">
+            <div class="spins-label">Available Spins</div>
+            <div class="spins-value"><span id="spinCount">0</span></div>
+          </div>
+
+          <div class="balance-box">
+            <div class="balance-label">Game Balance</div>
+            <div class="balance-value">₹<span id="balanceAmount">0</span></div>
+          </div>
+
+          <div class="profile-box" id="profileBox">
+            <button class="profile-btn" id="profileBtn">My Profile</button>
+
+            <div class="profile-menu" id="profileMenu">
+              <div class="uid-box">
+                <div><b>User:</b> <span id="menuUsername">-</span></div>
+                <div><b>UID:</b> <span id="menuUid">-</span></div>
+              </div>
+              <button onclick="goHome()">Home</button>
+              <button onclick="logoutUser()">Logout</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-area">
+        <div class="hero">
+          <h1 class="welcome">Welcome to Spin Zink Arena</h1>
+          <div class="player" id="welcomeUsername">Sanni</div>
+          <p class="info">Gaming style spin wheel ghumao aur reward jeeto.</p>
+        </div>
+
+        <div class="content-grid">
+          <div class="panel">
+            <h2 class="panel-title">Spin & Earn</h2>
+
+            <div class="wheel-area">
+              <div class="pointer"></div>
+
+              <div class="wheel-wrap">
+                <div class="wheel" id="wheel">
+                  <div class="wheel-label label-1">₹10</div>
+                  <div class="wheel-label label-2">₹20</div>
+                  <div class="wheel-label label-3">₹30</div>
+                  <div class="wheel-label label-4">₹40</div>
+                  <div class="wheel-label label-5">₹50</div>
+                  <div class="wheel-label label-6">₹60</div>
+                  <div class="wheel-label label-7">₹70</div>
+                  <div class="wheel-label label-8">₹80</div>
+                </div>
+              </div>
+
+              <button class="spin-btn" id="spinBtn">Spin Now</button>
+              <div class="spin-result" id="spinResult">Apni kismat ghumao 🚀</div>
+
+              <div class="buy-options" id="buyOptions">
+                <button class="buy-btn" id="buy5Btn">Buy 5 Spin 100rs</button>
+                <button class="buy-btn" id="buy10Btn">Buy 10 Spin 200rs</button>
+                <button class="buy-btn" id="buy15Btn">Buy 15 Spin 250rs</button>
+                <button class="buy-btn" id="buy20Btn">Buy 20 Spin 300rs</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2 class="panel-title">Owner Section</h2>
+
+            <div class="owner-card">
+              <div class="claim-box" id="claimBox">
+                <img
+                  src="owner-photo.jpeg"
+                  alt="Owner Photo"
+                  class="owner-photo"
+                  id="ownerPhoto"
+                />
+                <div class="claim-title" id="claimTitle">Buy Spin</div>
+                <div class="claim-text" id="claimText">pahle payment karo transaction id dalo, aapko spin mil jayega.</div>
+                <input type="text" id="claimCode" placeholder="transaction id">
+                <button class="claim-btn" id="claimBtn">Submit Code</button>
+                <div class="claim-status" id="claimStatus"></div>
+              </div>
+
+              <input type="tel" id="withdrawNumber" placeholder="apna upi number likho">
+              <input type="number" id="withdrawAmount" placeholder="apna withdrawal amount likho">
+              <button class="withdraw-btn" id="withdrawBtn">Withdrawal</button>
+              <div class="withdraw-status" id="withdrawStatus"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="photoModal">
+      <div class="modal-box">
+        <button class="close-modal" id="closeModalBtn">&times;</button>
+        <img src="owner-photo.jpeg" alt="Owner Large Photo">
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBrdEDJeu99lWokF1jVhZK5UKc8J1_NR0g",
+      authDomain: "sanni-apop.firebaseapp.com",
+      projectId: "sanni-apop",
+      storageBucket: "sanni-apop.firebasestorage.app",
+      messagingSenderId: "924999812783",
+      appId: "1:924999812783:web:1c8a10f80d26bc1f97365a"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.firestore();
+
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+
+    if(!currentUser){
+      window.location.href = "index.html";
+    }
+
+    const profileBtn = document.getElementById("profileBtn");
+    const profileMenu = document.getElementById("profileMenu");
+    const profileBox = document.getElementById("profileBox");
+    const balanceAmount = document.getElementById("balanceAmount");
+    const spinCount = document.getElementById("spinCount");
+    const spinBtn = document.getElementById("spinBtn");
+    const spinResult = document.getElementById("spinResult");
+    const wheel = document.getElementById("wheel");
+    const buy5Btn = document.getElementById("buy5Btn");
+    const buy10Btn = document.getElementById("buy10Btn");
+    const buy15Btn = document.getElementById("buy15Btn");
+    const buy20Btn = document.getElementById("buy20Btn");
+    const ownerPhoto = document.getElementById("ownerPhoto");
+    const photoModal = document.getElementById("photoModal");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    const claimBox = document.getElementById("claimBox");
+    const claimTitle = document.getElementById("claimTitle");
+    const claimText = document.getElementById("claimText");
+    const claimCode = document.getElementById("claimCode");
+    const claimBtn = document.getElementById("claimBtn");
+    const claimStatus = document.getElementById("claimStatus");
+    const withdrawNumber = document.getElementById("withdrawNumber");
+    const withdrawAmount = document.getElementById("withdrawAmount");
+    const withdrawBtn = document.getElementById("withdrawBtn");
+    const withdrawStatus = document.getElementById("withdrawStatus");
+    const termsBtn = document.getElementById("termsBtn");
+    const disclaimerBox = document.getElementById("disclaimerBox");
+    const closeDisclaimerBtn = document.getElementById("closeDisclaimerBtn");
+
+    const wheelRewards = [
+      { label: "₹10", value: 10, type: "money" },
+      { label: "₹20", value: 20, type: "money" },
+      { label: "₹30", value: 30, type: "money" },
+      { label: "₹40", value: 40, type: "money" },
+      { label: "₹50", value: 50, type: "money" },
+      { label: "₹60", value: 60, type: "money" },
+      { label: "₹70", value: 70, type: "money" },
+      { label: "₹80", value: 80, type: "money" }
+    ];
+
+    let gameBalance = 0;
+    let availableSpins = 0;
+    let wheelRotation = 0;
+    let isSpinning = false;
+    let pendingSpinPack = 0;
+    let spinsPlayedTotal = 0;
+    let firstFivePlan = [];
+
+    document.getElementById("welcomeUsername").innerText = currentUser.username || "Sanni";
+    document.getElementById("menuUsername").innerText = currentUser.username || "-";
+    document.getElementById("menuUid").innerText = currentUser.uid || "-";
+
+    profileBtn.addEventListener("click", function(e){
+      e.stopPropagation();
+      profileMenu.classList.toggle("show");
+    });
+
+    profileBox.addEventListener("click", function(e){
+      e.stopPropagation();
+    });
+
+    document.addEventListener("click", function(){
+      profileMenu.classList.remove("show");
+    });
+
+    termsBtn.addEventListener("click", function(e){
+      e.stopPropagation();
+      disclaimerBox.classList.toggle("show");
+    });
+
+    closeDisclaimerBtn.addEventListener("click", function(){
+      disclaimerBox.classList.remove("show");
+    });
+
+    disclaimerBox.addEventListener("click", function(e){
+      e.stopPropagation();
+    });
+
+    function goHome(){
+      window.location.href = "index.html";
+    }
+
+    function logoutUser(){
+      localStorage.removeItem("currentUser");
+      window.location.href = "index.html";
+    }
+
+    function updateTopUI(){
+      balanceAmount.innerText = gameBalance;
+      spinCount.innerText = availableSpins;
+      spinBtn.disabled = isSpinning || availableSpins <= 0;
+    }
+
+    function shuffleArray(arr){
+      for(let i = arr.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function createFirstFivePlan(){
+      const options = [10,20,30,40,50,60,70,80];
+
+      while(true){
+        let plan = [];
+        let total = 0;
+
+        for(let i = 0; i < 5; i++){
+          const left = 5 - i;
+          const possible = options.filter(v => {
+            const newTotal = total + v;
+            const minRest = (left - 1) * 10;
+            const maxRest = (left - 1) * 80;
+            return (newTotal + minRest <= 290) && (newTotal + maxRest >= 240);
+          });
+
+          const chosen = possible[Math.floor(Math.random() * possible.length)];
+          plan.push(chosen);
+          total += chosen;
+        }
+
+        if(total >= 240 && total <= 290){
+          return shuffleArray(plan);
+        }
+      }
+    }
+
+    function showSpinResult(reward, newBalance){
+      spinResult.innerHTML =
+        '<span class="win-amount">WIN ₹' + reward.value + '</span>' +
+        'Spin complete ho gaya 🎮<br>Total Balance: ₹' + newBalance;
+    }
+
+    async function loadUserData(){
+      try{
+        const userRef = db.collection("users").doc(currentUser.username);
+        const userSnap = await userRef.get();
+
+        if(userSnap.exists){
+          const data = userSnap.data();
+          const updates = {};
+
+          if(typeof data.gameBalance !== "number"){
+            gameBalance = 0;
+            updates.gameBalance = 0;
+          } else {
+            gameBalance = data.gameBalance;
+          }
+
+          if(typeof data.availableSpins !== "number"){
+            availableSpins = 5;
+            updates.availableSpins = 5;
+          } else {
+            availableSpins = data.availableSpins;
+          }
+
+          if(typeof data.spinsPlayedTotal !== "number"){
+            spinsPlayedTotal = 0;
+            updates.spinsPlayedTotal = 0;
+          } else {
+            spinsPlayedTotal = data.spinsPlayedTotal;
+          }
+
+          if(Array.isArray(data.firstFivePlan) && data.firstFivePlan.length === 5){
+            firstFivePlan = data.firstFivePlan;
+          } else {
+            firstFivePlan = createFirstFivePlan();
+            updates.firstFivePlan = firstFivePlan;
+          }
+
+          if(Object.keys(updates).length > 0){
+            await userRef.update(updates);
+          }
+
+          updateTopUI();
+        } else {
+          firstFivePlan = createFirstFivePlan();
+          await userRef.set({
+            username: currentUser.username,
+            uid: currentUser.uid || "",
+            gameBalance: 0,
+            availableSpins: 5,
+            spinsPlayedTotal: 0,
+            firstFivePlan: firstFivePlan
+          });
+          gameBalance = 0;
+          availableSpins = 5;
+          spinsPlayedTotal = 0;
+          updateTopUI();
+        }
+      }catch(error){
+        console.log("User load error", error);
+      }
+    }
+
+    async function updateUserData(payload){
+      try{
+        if(typeof payload.gameBalance === "number"){
+          gameBalance = payload.gameBalance;
+        }
+
+        if(typeof payload.availableSpins === "number"){
+          availableSpins = payload.availableSpins;
+        }
+
+        if(typeof payload.spinsPlayedTotal === "number"){
+          spinsPlayedTotal = payload.spinsPlayedTotal;
+        }
+
+        if(Array.isArray(payload.firstFivePlan)){
+          firstFivePlan = payload.firstFivePlan;
+        }
+
+        updateTopUI();
+        await db.collection("users").doc(currentUser.username).update(payload);
+      }catch(error){
+        console.log("User save error", error);
+      }
+    }
+
+    async function spinWheel(){
+      if(isSpinning || availableSpins <= 0) return;
+
+      isSpinning = true;
+      availableSpins -= 1;
+      updateTopUI();
+      spinResult.innerText = "Wheel ghoom raha hai...";
+
+      let reward;
+
+      if(spinsPlayedTotal < 5){
+        const fixedValue = firstFivePlan[spinsPlayedTotal];
+        reward = wheelRewards.find(item => item.value === fixedValue);
+      } else {
+        const rewardIndexRandom = Math.floor(Math.random() * wheelRewards.length);
+        reward = wheelRewards[rewardIndexRandom];
+      }
+
+      const rewardIndex = wheelRewards.findIndex(item => item.value === reward.value);
+      const sliceDeg = 45;
+      const centerAngle = rewardIndex * sliceDeg + (sliceDeg / 2);
+      const stopAngle = 360 - centerAngle;
+      const extraRounds = 360 * (5 + Math.floor(Math.random() * 2));
+
+      wheelRotation += extraRounds + stopAngle - (wheelRotation % 360);
+      wheel.style.transform = `rotate(${wheelRotation}deg)`;
+
+      setTimeout(async function(){
+        const newBalance = gameBalance + reward.value;
+
+        showSpinResult(reward, newBalance);
+
+        await updateUserData({
+          gameBalance: newBalance,
+          availableSpins: availableSpins,
+          spinsPlayedTotal: spinsPlayedTotal + 1,
+          firstFivePlan: firstFivePlan
+        });
+
+        isSpinning = false;
+        updateTopUI();
+      }, 5200);
+    }
+
+    ownerPhoto.addEventListener("click", function(){
+      photoModal.classList.add("show");
+    });
+
+    closeModalBtn.addEventListener("click", function(){
+      photoModal.classList.remove("show");
+    });
+
+    photoModal.addEventListener("click", function(e){
+      if(e.target === photoModal){
+        photoModal.classList.remove("show");
+      }
+    });
+
+    function openClaimBox(spinPack){
+      pendingSpinPack = spinPack;
+      claimBox.classList.add("show");
+      claimTitle.innerText = "Buy " + spinPack + " Spin";
+      claimText.innerText = "SMS box me transtion number likho, aapko " + spinPack + " spin mil jayega.";
+      claimCode.value = "";
+      claimStatus.innerText = "";
+    }
+
+    async function claimSpins(){
+      const code = claimCode.value.trim();
+
+      if(!pendingSpinPack){
+        claimStatus.innerText = "Pehle buy spin button dabao";
+        return;
+      }
+
+      if(code.length !== 23){
+        claimStatus.innerText = "Code galat hai payment karke sahi transaction id dalo";
+        return;
+      }
+
+      claimBtn.disabled = true;
+      claimStatus.innerText = "Spin add kiya ja raha hai...";
+
+      setTimeout(async function(){
+        const newSpins = availableSpins + pendingSpinPack;
+        await updateUserData({
+          gameBalance: gameBalance,
+          availableSpins: newSpins,
+          spinsPlayedTotal: spinsPlayedTotal,
+          firstFivePlan: firstFivePlan
+        });
+        claimStatus.innerText = pendingSpinPack + " spin successfully add ho gaya ✅";
+        claimCode.value = "";
+        pendingSpinPack = 0;
+        claimBtn.disabled = false;
+      }, 800);
+    }
+
+    async function requestWithdrawal(){
+      const number = withdrawNumber.value.trim();
+      const amount = parseInt(withdrawAmount.value.trim(), 10);
+
+      if(!number){
+        withdrawStatus.innerText = "Pehle UPI number likho";
+        return;
+      }
+
+      if(number.length < 10){
+        withdrawStatus.innerText = "Valid number likho";
+        return;
+      }
+
+      if(!amount || amount <= 0){
+        withdrawStatus.innerText = "Pehle valid amount likho";
+        return;
+      }
+
+      if(amount < 300){
+        withdrawStatus.innerText = "Minimum withdrawal 300 rs";
+        return;
+      }
+
+      if(gameBalance < amount){
+        withdrawStatus.innerText = "Aapke game balance me itna rupya nahi hai";
+        return;
+      }
+
+      withdrawBtn.disabled = true;
+      withdrawStatus.innerText = "Withdrawal request bheji ja rahi hai...";
+
+      try{
+        const newBalance = gameBalance - amount;
+
+        await db.collection("withdrawalRequests").add({
+          username: currentUser.username || "",
+          uid: currentUser.uid || "",
+          ownerNumber: number,
+          amount: amount,
+          status: "pending",
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        await updateUserData({
+          gameBalance: newBalance,
+          availableSpins: availableSpins,
+          spinsPlayedTotal: spinsPlayedTotal,
+          firstFivePlan: firstFivePlan
+        });
+
+        withdrawStatus.innerText = "Owner ko request bhej di gayi aur amount balance se kam ho gaya ✅";
+        withdrawNumber.value = "";
+        withdrawAmount.value = "";
+      }catch(error){
+        console.log("Withdrawal request error", error);
+        withdrawStatus.innerText = "Withdrawal request bhejne me problem aa gayi";
+      }
+
+      withdrawBtn.disabled = false;
+    }
+
+    spinBtn.addEventListener("click", spinWheel);
+    buy5Btn.addEventListener("click", function(){ openClaimBox(5); });
+    buy10Btn.addEventListener("click", function(){ openClaimBox(10); });
+    buy15Btn.addEventListener("click", function(){ openClaimBox(15); });
+    buy20Btn.addEventListener("click", function(){ openClaimBox(20); });
+    claimBtn.addEventListener("click", claimSpins);
+    withdrawBtn.addEventListener("click", requestWithdrawal);
+
+    loadUserData();
+  </script>
+
+</body>
+</html>

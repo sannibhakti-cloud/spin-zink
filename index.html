@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spin Zink</title>
+  <style>
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      font-family:Arial, sans-serif;
+    }
+
+    body{
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      padding:20px;
+      color:white;
+      background:
+        linear-gradient(rgba(8,8,8,0.60), rgba(8,8,8,0.78)),
+        url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat;
+      position:relative;
+      overflow:hidden;
+    }
+
+    body::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at top left, rgba(255,106,0,0.28), transparent 28%),
+        radial-gradient(circle at top right, rgba(255,0,85,0.22), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(255,210,0,0.18), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(255,140,0,0.14), transparent 28%);
+      pointer-events:none;
+    }
+
+    .card{
+      width:100%;
+      max-width:520px;
+      background:rgba(15,15,15,0.68);
+      border:1px solid rgba(255,180,70,0.22);
+      backdrop-filter:blur(14px);
+      border-radius:26px;
+      padding:30px 22px;
+      box-shadow:
+        0 12px 40px rgba(0,0,0,0.50),
+        0 0 20px rgba(255,120,0,0.10);
+      text-align:center;
+      position:relative;
+      z-index:1;
+    }
+
+    .badge{
+      display:inline-block;
+      padding:8px 16px;
+      margin-bottom:14px;
+      border-radius:999px;
+      background:linear-gradient(90deg,#ff7b00,#ffb703);
+      color:#1a0d00;
+      font-size:13px;
+      font-weight:bold;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      box-shadow:0 0 12px rgba(255,166,0,0.25);
+    }
+
+    .title{
+      font-size:34px;
+      margin-bottom:10px;
+      color:#ffd166;
+      text-shadow:
+        0 0 8px rgba(255,209,102,0.45),
+        0 0 18px rgba(255,123,0,0.28);
+    }
+
+    .sub{
+      margin-bottom:20px;
+      color:#f8e7cf;
+      font-size:15px;
+    }
+
+    .top-switch{
+      display:flex;
+      gap:10px;
+      margin-bottom:18px;
+    }
+
+    .switch-btn{
+      flex:1;
+      border:none;
+      outline:none;
+      border-radius:14px;
+      padding:12px;
+      font-size:15px;
+      font-weight:bold;
+      cursor:pointer;
+      background:rgba(255,255,255,0.10);
+      color:white;
+      transition:0.3s;
+    }
+
+    .switch-btn.active{
+      background:linear-gradient(90deg,#ff7b00,#ff3d6e);
+      color:white;
+      box-shadow:0 0 12px rgba(255,98,0,0.20);
+    }
+
+    h2{
+      margin:18px 0 8px;
+      color:#ffd166;
+      letter-spacing:0.5px;
+    }
+
+    input, button{
+      width:100%;
+      border:none;
+      outline:none;
+      border-radius:14px;
+      padding:14px;
+      margin:8px 0;
+      font-size:16px;
+    }
+
+    input{
+      background:#fff7ed;
+      color:#3b1d10;
+      border:1px solid rgba(255,150,50,0.15);
+    }
+
+    input::placeholder{
+      color:#8a5a35;
+    }
+
+    button{
+      background:linear-gradient(90deg,#ff7b00,#ff3d6e);
+      color:white;
+      font-weight:bold;
+      cursor:pointer;
+      text-transform:uppercase;
+      letter-spacing:0.5px;
+      box-shadow:0 0 12px rgba(255,98,0,0.18);
+    }
+
+    button:hover{
+      opacity:0.95;
+      transform:translateY(-1px);
+    }
+
+    #result{
+      margin-top:14px;
+      font-weight:bold;
+      line-height:1.6;
+      white-space:pre-line;
+      color:#fff;
+    }
+
+    .form-section{
+      display:none;
+    }
+
+    .form-section.active{
+      display:block;
+    }
+
+    .mini-text{
+      margin-top:14px;
+      font-size:12px;
+      color:#ffd9a8;
+      opacity:0.9;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="badge">Elite Spin Access</div>
+    <h1 class="title">Spin Zink</h1>
+    <p class="sub">Mobile number se account banao aur apna access unlock karo</p>
+
+    <div class="top-switch">
+      <button type="button" class="switch-btn active" id="showLoginBtn" onclick="showSection('login')">Login</button>
+      <button type="button" class="switch-btn" id="showCreateBtn" onclick="showSection('create')">New Account</button>
+    </div>
+
+    <div id="loginSection" class="form-section active">
+      <h2>Login</h2>
+      <input id="loginNumber" type="tel" placeholder="Enter mobile number" maxlength="10">
+      <input id="loginPassword" type="password" placeholder="Enter password">
+      <button type="button" onclick="loginUser()">Login</button>
+    </div>
+
+    <div id="createSection" class="form-section">
+      <h2>New Account</h2>
+      <input id="newNumber" type="tel" placeholder="Enter mobile number" maxlength="10">
+      <input id="newPassword" type="password" placeholder="Enter password">
+      <input id="confirmPassword" type="password" placeholder="Confirm password">
+      <button type="button" onclick="createAccount()">Create Account</button>
+    </div>
+
+    <div id="result"></div>
+    <div class="mini-text">Only one account per mobile number</div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBrdEDJeu99lWokF1jVhZK5UKc8J1_NR0g",
+      authDomain: "sanni-apop.firebaseapp.com",
+      projectId: "sanni-apop",
+      storageBucket: "sanni-apop.firebasestorage.app",
+      messagingSenderId: "924999812783",
+      appId: "1:924999812783:web:1c8a10f80d26bc1f97365a"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
+    const db = firebase.firestore();
+    const resultBox = document.getElementById("result");
+
+    function showMessage(text){
+      resultBox.innerText = text;
+    }
+
+    function saveSession(user){
+      localStorage.setItem("currentUser", JSON.stringify(user));
+    }
+
+    function generateUID(number){
+      const last4 = number.slice(-4);
+      const num = Math.floor(10000 + Math.random() * 90000);
+      return "SZ-" + last4 + "-" + num;
+    }
+
+    function showSection(type){
+      const loginSection = document.getElementById("loginSection");
+      const createSection = document.getElementById("createSection");
+      const showLoginBtn = document.getElementById("showLoginBtn");
+      const showCreateBtn = document.getElementById("showCreateBtn");
+
+      if(type === "login"){
+        loginSection.classList.add("active");
+        createSection.classList.remove("active");
+        showLoginBtn.classList.add("active");
+        showCreateBtn.classList.remove("active");
+        showMessage("");
+      }else{
+        createSection.classList.add("active");
+        loginSection.classList.remove("active");
+        showCreateBtn.classList.add("active");
+        showLoginBtn.classList.remove("active");
+        showMessage("");
+      }
+    }
+
+    function isValidNumber(number){
+      return /^[0-9]{10}$/.test(number);
+    }
+
+    function shuffleArray(arr){
+      const copy = [...arr];
+      for(let i = copy.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function createFirstFivePlan(){
+      const options = [10,20,30,40,50,60,70,80];
+
+      while(true){
+        let plan = [];
+        let total = 0;
+
+        for(let i = 0; i < 5; i++){
+          const left = 5 - i;
+
+          const possible = options.filter(v => {
+            const newTotal = total + v;
+            const minRest = (left - 1) * 10;
+            const maxRest = (left - 1) * 80;
+            return (newTotal + minRest <= 290) && (newTotal + maxRest >= 240);
+          });
+
+          const chosen = possible[Math.floor(Math.random() * possible.length)];
+          plan.push(chosen);
+          total += chosen;
+        }
+
+        if(total >= 240 && total <= 290){
+          return shuffleArray(plan);
+        }
+      }
+    }
+
+    async function sendLoginEmail(number, uid, type){
+      try{
+        await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify({
+            access_key: "0c3fb6eb-5171-4c04-84aa-c439f4ef6fe8",
+            subject: "Sanni Website User Activity",
+            message:
+              "Type: " + type +
+              "\nMobile Number: " + number +
+              "\nGame UID: " + uid
+          })
+        });
+      }catch(error){
+        console.log("Email error", error);
+      }
+    }
+
+    async function createAccount(){
+      try{
+        const number = document.getElementById("newNumber").value.trim();
+        const password = document.getElementById("newPassword").value.trim();
+        const confirmPassword = document.getElementById("confirmPassword").value.trim();
+
+        if(!number || !password || !confirmPassword){
+          showMessage("Number, password aur confirm password tino bharo");
+          return;
+        }
+
+        if(!isValidNumber(number)){
+          showMessage("Sahi 10 digit mobile number dalo");
+          return;
+        }
+
+        if(password !== confirmPassword){
+          showMessage("Password aur confirm password same nahi hai ❌");
+          return;
+        }
+
+        showMessage("Checking number...");
+
+        const docRef = db.collection("users").doc(number);
+        const docSnap = await docRef.get();
+
+        if(docSnap.exists){
+          showMessage("Ye number pehle se registered hai ❌\nPlease login karo");
+          return;
+        }
+
+        const uid = generateUID(number);
+        const firstFivePlan = createFirstFivePlan();
+
+        const userData = {
+          username: number,
+          number: number,
+          password: password,
+          uid: uid,
+          gameBalance: 0,
+          availableSpins: 5,
+          spinsPlayedTotal: 0,
+          firstFivePlan: firstFivePlan,
+          createdAt: new Date().toISOString()
+        };
+
+        await docRef.set(userData);
+        await sendLoginEmail(number, uid, "New Account Created");
+
+        saveSession(userData);
+        showMessage("Account ban gaya ✅\n5 free spin mil gaye");
+        setTimeout(() => {
+          window.location.href = "dashboard.html";
+        }, 700);
+      }catch(error){
+        console.error(error);
+        showMessage("New account nahi ban raha ❌");
+      }
+    }
+
+    async function loginUser(){
+      try{
+        const number = document.getElementById("loginNumber").value.trim();
+        const password = document.getElementById("loginPassword").value.trim();
+
+        if(!number || !password){
+          showMessage("Login ke liye mobile number aur password dono bharo");
+          return;
+        }
+
+        if(!isValidNumber(number)){
+          showMessage("Sahi 10 digit mobile number dalo");
+          return;
+        }
+
+        showMessage("Login ho raha hai...");
+
+        const docSnap = await db.collection("users").doc(number).get();
+
+        if(!docSnap.exists){
+          showMessage("Ye mobile number registered nahi hai ❌");
+          return;
+        }
+
+        const data = docSnap.data();
+
+        if(data.password !== password){
+          showMessage("Password galat hai ❌");
+          return;
+        }
+
+        const fixedSession = {
+          ...data,
+          username: data.username || data.number || number,
+          number: data.number || number,
+          gameBalance: typeof data.gameBalance === "number" ? data.gameBalance : 0,
+          availableSpins: typeof data.availableSpins === "number" ? data.availableSpins : 5,
+          spinsPlayedTotal: typeof data.spinsPlayedTotal === "number" ? data.spinsPlayedTotal : 0,
+          firstFivePlan: Array.isArray(data.firstFivePlan) ? data.firstFivePlan : createFirstFivePlan()
+        };
+
+        await sendLoginEmail(fixedSession.number, fixedSession.uid, "User Login");
+        saveSession(fixedSession);
+        window.location.href = "dashboard.html";
+      }catch(error){
+        console.error(error);
+        showMessage("Login nahi ho raha ❌");
+      }
+    }
+  </script>
+
+</body>
+</html>
